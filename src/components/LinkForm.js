@@ -1,5 +1,11 @@
 import React from 'react'
 
-export const LinkForm = () => {
-  return <h1>LinkForm</h1>
-}
+const LinkForm = () => {
+  return (
+    <form className="card card-body">
+
+    </form>
+  )
+};
+
+export default LinkForm;

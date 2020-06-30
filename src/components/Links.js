@@ -1,15 +1,31 @@
 import React, { useEffect, useState } from 'react'
 import LinkForm from "./LinkForm";
+import { toast } from 'react-toastify'
 
 import { db } from "../firebase";
 
 const Links = () => {
   const [links, setLinks] = useState([]);
 
+  //Crear tarjetas en la base de datos:
   const addOrEditLink = async (linkObject) => {
     await db.collection("links").doc().set(linkObject);
-    console.log('New task added')
-  }
+    toast('New Link Added', {
+      type: 'success',
+      autoClose: 2000,
+    })
+  };
+
+  //Borrar tarjetas de la base de datos:
+  const onDeletelink = async (id) => {
+    if (window.confirm("are you sure you want to delete this link?")) {
+      await db.collection('links').doc(id).delete();
+      toast('Link Removed Successfully', {
+        type: 'error',
+        autoClose: 2000,
+      });
+    }
+  };
 
   const getLinks = async () => {
     db.collection("links").onSnapshot((querySnapshot) => {
@@ -32,11 +48,18 @@ const Links = () => {
       </div>
       <div className="col-md-8 p-2">
         {links.map(link => (
-          <div className="card md-1">
+          <div className="card md-1" key={ link.id }>
             <div className="card-body">
-              <h4>{ link.name }</h4>
+              <div className="d-flex justify-content-between">
+                <h4>{ link.name }</h4>
+                <i
+                  className="material-icons text-danger"
+                  onClick={ () => onDeletelink(link.id) }>
+                  close
+                </i>
+              </div>
               <p>{ link.description }</p>
-              <a href={ link.url } target="_blank">
+              <a href={ link.url } target="_blank" rel="noopener noreferrer">
                 Go to Website
               </a>
             </div>

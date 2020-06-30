@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { db } from '../firebase';
 
 const LinkForm = (props) => {
 
@@ -15,11 +16,26 @@ const LinkForm = (props) => {
     setValues({...values, [name]: value})
   };
 
+  //Agregar o editar tarjetas:
   const handleSubmit = (e) => {
     e.preventDefault();
     props.addOrEditLink(values);
     setValues({...initialStateValues})
   };
+
+  const getLinkById = async (id) => {
+    const doc = await db.collection('links').doc(id).get();
+    setValues({ ...doc.data() })
+  }
+
+  useEffect(() => {
+    console.log(props.currentId);
+    if (props.currentId === "") {
+      setValues({...initialStateValues});
+    } else {
+      getLinkById(props.currentId);
+    }
+  }, [props.currentId]);
 
   return (
     <form className="card card-body" onSubmit={ handleSubmit }>
@@ -63,7 +79,7 @@ const LinkForm = (props) => {
       </div>
 
       <button className="btn btn-primary btn-block">
-        Save
+        { props.currentId === '' ? 'save' : 'Update'}
       </button>
     </form>
   );

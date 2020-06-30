@@ -7,13 +7,30 @@ import { db } from "../firebase";
 const Links = () => {
   const [links, setLinks] = useState([]);
 
+  //Actualizar una tarjeta:
+  const [currentId, setCurrentId] = useState("");
+
   //Crear tarjetas en la base de datos:
   const addOrEditLink = async (linkObject) => {
-    await db.collection("links").doc().set(linkObject);
-    toast('New Link Added', {
-      type: 'success',
-      autoClose: 2000,
-    })
+    //Validación:
+    try {
+      if (currentId === '') {
+        await db.collection("links").doc().set(linkObject);
+        toast('New Link Added', {
+          type: 'success',
+          autoClose: 2000,
+        });
+      } else {
+        await db.collection("links").doc(currentId).update(linkObject);
+        toast("Link Updated Successfully", {
+          type: "info",
+          autoClose: 2000,
+        });
+        setCurrentId("");
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   //Borrar tarjetas de la base de datos:
@@ -44,7 +61,7 @@ const Links = () => {
   return (
     <div>
       <div className="col-md-4 p-2">
-        <LinkForm addOrEditLink={ addOrEditLink } />
+        <LinkForm {...{ addOrEditLink, currentId, links }} />
       </div>
       <div className="col-md-8 p-2">
         {links.map(link => (
@@ -52,11 +69,18 @@ const Links = () => {
             <div className="card-body">
               <div className="d-flex justify-content-between">
                 <h4>{ link.name }</h4>
-                <i
-                  className="material-icons text-danger"
-                  onClick={ () => onDeletelink(link.id) }>
-                  close
-                </i>
+                <div>
+                  <i
+                    className="material-icons text-danger"
+                    onClick={ () => onDeletelink(link.id) }>
+                    close
+                  </i>
+                  <i
+                    className="material-icons"
+                    onClick={ () => setCurrentId(link.id) }>
+                    create
+                  </i>
+                </div>
               </div>
               <p>{ link.description }</p>
               <a href={ link.url } target="_blank" rel="noopener noreferrer">

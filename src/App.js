@@ -7,10 +7,12 @@ import LinkForm from './components/LinkForm'
 
 function App() {
   return (
-    <>
-      <LinkForm/>
-      <Links/>
-    </>
+    <div className="container p-4">
+      <div className="row">
+        <LinkForm/>
+        <Links/>
+      </div>
+    </div>
   );
 }
 

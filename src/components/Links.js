@@ -27,11 +27,21 @@ const Links = () => {
 
   return (
     <div>
-      <LinkForm addOrEditLink={addOrEditLink} />
-      <div className="col-md-8">
-        { links.map(link => {
-          return <h1>{ link.name }</h1>
-        })}
+      <div className="col-md-4 p-2">
+        <LinkForm addOrEditLink={ addOrEditLink } />
+      </div>
+      <div className="col-md-8 p-2">
+        {links.map(link => (
+          <div className="card md-1">
+            <div className="card-body">
+              <h4>{ link.name }</h4>
+              <p>{ link.description }</p>
+              <a href={ link.url } target="_blank">
+                Go to Website
+              </a>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

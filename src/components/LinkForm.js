@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { db } from '../firebase';
+import { toast } from 'react-toastify'
 
 const LinkForm = (props) => {
 
@@ -16,9 +17,22 @@ const LinkForm = (props) => {
     setValues({...values, [name]: value})
   };
 
+  //Validación de URL:
+  const validateURL = str => {
+    return /^(?:(?:(?:https?|ftp):)?\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:[/?#]\S*)?$/i.test(str);
+  }
+
   //Agregar o editar tarjetas:
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (!validateURL(values.url)) {
+      return toast("Invalid URL", {
+        type: "warning",
+        autoClose: 1000,
+      });
+    }
+
     props.addOrEditLink(values);
     setValues({...initialStateValues})
   };
